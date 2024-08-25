@@ -1,4 +1,4 @@
-//Pr·ctica 2: Ìndices, mesh, proyecciones, transformaciones geomÈtricas
+//Pr√°ctica 2: √≠ndices, mesh, proyecciones, transformaciones geom√©tricas
 #include <stdio.h>
 #include <string.h>
 #include <cmath>
@@ -9,7 +9,7 @@
 #include<glm.hpp>
 #include<gtc\matrix_transform.hpp>
 #include<gtc\type_ptr.hpp>
-//clases para dar orden y limpieza al cÛdigo
+//clases para dar orden y limpieza al c√≥digo
 #include"Mesh.h"
 #include"Shader.h"
 #include"Window.h"
@@ -24,13 +24,13 @@ static const char* vShader = "shaders/shader.vert";
 static const char* fShader = "shaders/shader.frag";
 static const char* vShaderColor = "shaders/shadercolor.vert";
 static const char* fShaderColor = "shaders/shadercolor.frag";
-//shaders nuevos se crearÌan ac·
+//shaders nuevos se crear√≠an ac√°
 
 float angulo = 0.0f;
 
-//color cafÈ en RGB : 0.478, 0.255, 0.067
+//color caf√© en RGB : 0.478, 0.255, 0.067
 
-//Pir·mide triangular regular
+//Pir√°mide triangular regular
 void CreaPiramide()
 {
 	unsigned int indices[] = { 
@@ -52,7 +52,7 @@ void CreaPiramide()
 	meshList.push_back(obj1);
 }
 
-//VÈrtices de un cubo
+//V√©rtices de un cubo
 void CrearCubo()
 {
 	unsigned int cubo_indices[] = {
@@ -242,7 +242,7 @@ void CrearLetrasyFiguras()
 void CreateShaders()
 {
 
-	Shader *shader1 = new Shader(); //shader para usar Ìndices: objetos: cubo y  pir·mide
+	Shader *shader1 = new Shader(); //shader para usar √≠ndices: objetos: cubo y  pir√°mide
 	shader1->CreateFromFiles(vShader, fShader);
 	shaderList.push_back(*shader1);
 
@@ -256,17 +256,17 @@ int main()
 {
 	mainWindow = Window(720, 720);
 	mainWindow.Initialise();
-	CreaPiramide(); //Ìndice 0 en MeshList
-	CrearCubo();//Ìndice 1 en MeshList
-	CrearLetrasyFiguras(); //usa MeshColor, Ìndices en MeshColorList
+	CreaPiramide(); //√≠ndice 0 en MeshList
+	CrearCubo();//√≠ndice 1 en MeshList
+	CrearLetrasyFiguras(); //usa MeshColor, √≠ndices en MeshColorList
 	CreateShaders();
 	GLuint uniformProjection = 0;
 	GLuint uniformModel = 0;
-	//Projection: Matriz de DimensiÛn 4x4 para indicar si vemos en 2D( orthogonal) o en 3D) perspectiva
+	//Projection: Matriz de Dimensi√≥n 4x4 para indicar si vemos en 2D( orthogonal) o en 3D) perspectiva
 	glm::mat4 projection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 100.0f);
 	//glm::mat4 projection = glm::perspective(glm::radians(60.0f)	,mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 100.0f);
 	
-	//Model: Matriz de DimensiÛn 4x4 en la cual se almacena la multiplicaciÛn de las transformaciones geomÈtricas.
+	//Model: Matriz de Dimensi√≥n 4x4 en la cual se almacena la multiplicaci√≥n de las transformaciones geom√©tricas.
 	glm::mat4 model(1.0); //fuera del while se usa para inicializar la matriz con una identidad
 	
 	//Loop mientras no se cierra la ventana
@@ -279,25 +279,25 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Se agrega limpiar el buffer de profundidad
 		
 													
-		//Para las letras hay que usar el segundo set de shaders con Ìndice 1 en ShaderList 
+		//Para las letras hay que usar el segundo set de shaders con √≠ndice 1 en ShaderList 
 		shaderList[1].useShader();
 		uniformModel = shaderList[1].getModelLocation();
 		uniformProjection = shaderList[1].getProjectLocation();
 		
-		//Inicializar matriz de dimensiÛn 4x4 que servir· como matriz de modelo para almacenar las transformaciones geomÈtricas
+		//Inicializar matriz de dimensi√≥n 4x4 que servir√° como matriz de modelo para almacenar las transformaciones geom√©tricas
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -4.0f));
 		//
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));//FALSE ES PARA QUE NO SEA TRANSPUESTA y se envÌan al shader como variables de tipo uniform
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));//FALSE ES PARA QUE NO SEA TRANSPUESTA y se env√≠an al shader como variables de tipo uniform
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		meshColorList[0]->RenderMeshColor();
 
-		//Para el cubo y la pir·mide se usa el primer set de shaders con Ìndice 0 en ShaderList
+		//Para el cubo y la pir√°mide se usa el primer set de shaders con √≠ndice 0 en ShaderList
 		shaderList[0].useShader(); 
 		uniformModel = shaderList[0].getModelLocation();
 		uniformProjection = shaderList[0].getProjectLocation();
 		angulo += 0.01;
-		//Inicializar matriz de dimensiÛn 4x4 que servir· como matriz de modelo para almacenar las transformaciones geomÈtricas
+		//Inicializar matriz de dimensi√≥n 4x4 que servir√° como matriz de modelo para almacenar las transformaciones geom√©tricas
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));//FALSE ES PARA QUE NO SEA TRANSPUESTA
@@ -312,9 +312,9 @@ int main()
 }
 // inicializar matriz: glm::mat4 model(1.0);
 // reestablecer matriz: model = glm::mat4(1.0);
-//TraslaciÛn
+//Traslaci√≥n
 //model = glm::translate(model, glm::vec3(0.0f, 0.0f, -5.0f));
-//////////////// ROTACI”N //////////////////
+//////////////// ROTACI√ìN //////////////////
 //model = glm::rotate(model, 45 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 ////////////////  ESCALA ////////////////
 //model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
