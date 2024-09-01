@@ -1,4 +1,4 @@
-//pr·ctica 3: Modelado GeomÈtrico y C·mara SintÈtica.
+//pr√°ctica 3: Modelado Geom√©trico y C√°mara Sint√©tica.
 #include <stdio.h>
 #include <string.h>
 #include <cmath>
@@ -10,7 +10,7 @@
 #include <gtc\matrix_transform.hpp>
 #include <gtc\type_ptr.hpp>
 #include <gtc\random.hpp>
-//clases para dar orden y limpieza al cÚdigo
+//clases para dar orden y limpieza al c√≤digo
 #include "Mesh.h"
 #include "Shader.h"
 #include "Sphere.h"
@@ -78,7 +78,7 @@ void CrearCubo()
 	meshList.push_back(cubo);
 }
 
-// Pir·mide triangular regular
+// Pir√°mide triangular regular
 // se pueden declarar como primitivas las piramides por tener pocos vertices, pero no lo son
 void CrearPiramideTriangular()
 {
@@ -102,23 +102,23 @@ void CrearPiramideTriangular()
 
 }
 
-//Crear cilindro, cono y esferas con arreglos din·micos vector creados en el Semestre 2023 - 1 : por S·nchez PÈrez Omar Alejandro
+//Crear cilindro, cono y esferas con arreglos din√°micos vector creados en el Semestre 2023 - 1 : por S√°nchez P√©rez Omar Alejandro
 void CrearCilindro(int res, float R) {
 	//constantes utilizadas en los ciclos for
 	int n, i;
-	//c·lculo del paso interno en la circunferencia y variables que almacenar·n cada coordenada de cada vÈrtice
+	//c√°lculo del paso interno en la circunferencia y variables que almacenar√°n cada coordenada de cada v√©rtice
 	GLfloat dt = 2 * PI / res, x, z, y = -0.5f;
 
 	vector<GLfloat> vertices;
 	vector<unsigned int> indices;
 
-	//ciclo for para crear los vÈrtices de las paredes del cilindro
+	//ciclo for para crear los v√©rtices de las paredes del cilindro
 	for (n = 0; n <= (res); n++) {
 		if (n != res) {
 			x = R * cos((n)*dt);
 			z = R * sin((n)*dt);
 		}
-		//caso para terminar el cÌrculo
+		//caso para terminar el c√≠rculo
 		else {
 			x = R * cos((0)*dt);
 			z = R * sin((0)*dt);
@@ -185,7 +185,7 @@ void CrearCilindro(int res, float R) {
 		}
 	}
 
-	//Se generan los indices de los vÈrtices
+	//Se generan los indices de los v√©rtices
 	for (i = 0; i < vertices.size(); i++) indices.push_back(i);
 
 	//se genera el mesh del cilindro
@@ -194,12 +194,12 @@ void CrearCilindro(int res, float R) {
 	meshList.push_back(cilindro);
 }
 
-//funciÛn para crear un cono
+//funci√≥n para crear un cono
 void CrearCono(int res,float R) {
 
 	//constantes utilizadas en los ciclos for
 	int n, i;
-	//c·lculo del paso interno en la circunferencia y variables que almacenar·n cada coordenada de cada vÈrtice
+	//c√°lculo del paso interno en la circunferencia y variables que almacenar√°n cada coordenada de cada v√©rtice
 	GLfloat dt = 2 * PI / res, x, z, y = -0.5f;
 	
 	vector<GLfloat> vertices;
@@ -211,7 +211,7 @@ void CrearCono(int res,float R) {
 	vertices.push_back(0.5);
 	vertices.push_back(0.0);
 	
-	//ciclo for para crear los vÈrtices de la circunferencia del cono
+	//ciclo for para crear los v√©rtices de la circunferencia del cono
 	for (n = 0; n <= (res); n++) {
 		x = R * cos((n)*dt);
 		z = R * sin((n)*dt);
@@ -241,7 +241,7 @@ void CrearCono(int res,float R) {
 	meshList.push_back(cono);
 }
 
-//funciÛn para crear pir·mide cuadrangular unitaria
+//funci√≥n para crear pir√°mide cuadrangular unitaria
 void CrearPiramideCuadrangular()
 {
 	vector<unsigned int> piramidecuadrangular_indices = {
@@ -278,6 +278,20 @@ void CreateShaders()
 
 void generarTriangulo(float R, float G, float B, float tX, float tY, float tZ, float deg, float rX, float rY, float rZ, float sX, float sY, float sZ, bool inv, int cara)
 {
+	/*
+ 	se crea esta funci√≥n que permite generar las piramides necesarias sin necesidad de 
+ 	copiar y pegar todas las l√≠neas. Se definen las variables uniform y los vectores ya que
+   	si no lo hac√≠a, el programa generaba las figuras "pegadas" a la c√°mara.
+    
+    	La funci√≥n recibe como par√°metros todos los valores necesarios para crear cualquier pir√°mide triangular.
+     
+     	La variable "inv" es una bandera que indica si el triangulo es invertido, entonces se hace la rotacion correspondiente.
+      	La variable "cara" es un √≠ndice que indica en cual cara se va a colocar la pir√°mide, esto debido a que se debe hacer una 
+        rotaci√≥n adicional para la cara derecha.
+	Las mismas rotaciones se hacen para las pir√°mides de la cara izquierda, sin embargo, esto simplemente se consigue cambiando el √°ngulo de
+ 	rotaci√≥n de 120 a -120, pues la pir√°mide es sim√©trica. Esto se hace manualmente pues no es necesario escribir una funci√≥n
+  	que lo realice.
+	*/
 	//inicializar variables uniform
 	GLuint uniformProjection = 0;
 	GLuint uniformModel = 0;
@@ -300,14 +314,10 @@ void generarTriangulo(float R, float G, float B, float tX, float tY, float tZ, f
 	{ 
 		model = glm::rotate(model, glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	}
-	if (cara == 2) // si la cara es la derecha se hace una rotacion adicional
-	{
-		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	}
 
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)); //manda modelo al shader
 	glUniform3fv(uniformColor, 1, glm::value_ptr(color)); //se manda el nuevo color
-	meshList[1]->RenderMesh(); //para piramide triangular se usa meshGeometry
+	meshList[1]->RenderMesh(); //para piramide triangular se usa mesh
 
 }
 
@@ -315,25 +325,25 @@ int main()
 {
 	mainWindow = Window(720, 720); //cuadrada para evitar escalado incorrecto
 	mainWindow.Initialise();
-	//Cilindro y cono reciben resoluciÛn (slices, rebanadas) y Radio de circunferencia de la base y tapa
+	//Cilindro y cono reciben resoluci√≥n (slices, rebanadas) y Radio de circunferencia de la base y tapa
 	//orden influye en la lista, inicializacion de las primitivas
 	//solo se tiene una meshlist porque no se utiliza meshcolor que recibe RGB
-	CrearCubo();//Ìndice 0 en MeshList
-	CrearPiramideTriangular();//Ìndice 1 en MeshList
-	CrearCilindro(40, 1.0f);//Ìndice 2 en MeshList
-	CrearCono(25, 2.0f);//Ìndice 3 en MeshList
-	CrearPiramideCuadrangular();//Ìndice 4 en MeshList
+	CrearCubo();//√≠ndice 0 en MeshList
+	CrearPiramideTriangular();//√≠ndice 1 en MeshList
+	CrearCilindro(40, 1.0f);//√≠ndice 2 en MeshList
+	CrearCono(25, 2.0f);//√≠ndice 3 en MeshList
+	CrearPiramideCuadrangular();//√≠ndice 4 en MeshList
 	CreateShaders();
 	
-	/*C·mara se usa el comando: glm::lookAt(vector de posiciÛn, vector de orientaciÛn, vector up));
+	/*C√°mara se usa el comando: glm::lookAt(vector de posici√≥n, vector de orientaci√≥n, vector up));
 	En la clase Camera se reciben 5 datos:
-	glm::vec3 vector de posiciÛn,
+	glm::vec3 vector de posici√≥n,
 	glm::vec3 vector up,
-	GlFloat yaw rotaciÛn para girar hacia la derecha e izquierda
-	GlFloat pitch rotaciÛn para inclinar hacia arriba y abajo
+	GlFloat yaw rotaci√≥n para girar hacia la derecha e izquierda
+	GlFloat pitch rotaci√≥n para inclinar hacia arriba y abajo
 	GlFloat velocidad de desplazamiento,
 	GlFloat velocidad de vuelta o de giro
-	Se usa el Mouse y las teclas WASD y su posiciÛn inicial est· en 0,0,1 y ve hacia 0,0,-1.
+	Se usa el Mouse y las teclas WASD y su posici√≥n inicial est√° en 0,0,1 y ve hacia 0,0,-1.
 	*/
 
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.3f, 0.3f); //aqui se modifican velocidades
@@ -363,7 +373,7 @@ int main()
 		lastTime = now;
 		//Recibir eventos del usuario
 		glfwPollEvents();
-		//C·mara
+		//C√°mara
 		//recibiendo informacion 
 		camera.keyControl(mainWindow.getsKeys(), deltaTime);
 		camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
@@ -382,8 +392,8 @@ int main()
 		model = glm::rotate(model, glm::radians(mainWindow.getrotax()), glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::rotate(model, glm::radians(mainWindow.getrotay()), glm::vec3(0.0f, 1.0f, 0.0f));  //al presionar la tecla Y se rota sobre el eje y
 		model = glm::rotate(model, glm::radians(mainWindow.getrotaz()), glm::vec3(0.0f, 0.0f, 1.0f));
-		//la lÌnea de proyecciÛn solo se manda una vez a menos que en tiempo de ejecuciÛn
-		//se programe cambio entre proyecciÛn ortogonal y perspectiva
+		//la l√≠nea de proyecci√≥n solo se manda una vez a menos que en tiempo de ejecuci√≥n
+		//se programe cambio entre proyecci√≥n ortogonal y perspectiva
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
