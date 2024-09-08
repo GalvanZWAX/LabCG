@@ -20,10 +20,12 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 	articulacion2 = 0.0f;
 	articulacion3 = 0.0f;
 	articulacion4 = 0.0f;
-	llanta1 = 0.0f;
-	llanta2 = 0.0f;
-	llanta3 = 0.0f;
-	llanta4 = 0.0f;
+	articulacion5 = 0.0f;
+	articulacion6 = 0.0f;
+	articulacion7 = 0.0f;
+	articulacion8 = 0.0f;
+	articulacion9 = 0.0f; //COLA
+	articulacion10 = 0.0f;
 	
 	for (size_t i = 0; i < 1024; i++)
 	{
@@ -136,7 +138,7 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 	}
 	if (key == GLFW_KEY_H)
 	{
-		theWindow->articulacion3 -= 3.0;
+		theWindow->articulacion3 += 3.0;
 	}
 	if (key == GLFW_KEY_J)
 	{
@@ -144,20 +146,30 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 	}
 	if (key == GLFW_KEY_V)
 	{
-		theWindow->llanta1 += 10.0;
+		theWindow->articulacion5 += 3.0;
 	}
 	if (key == GLFW_KEY_B)
 	{
-		theWindow->llanta2 += 10.0;
+		theWindow->articulacion6 += 3.0;
 	}
 	if (key == GLFW_KEY_N)
 	{
-		theWindow->llanta3 += 10.0;
+		theWindow->articulacion7 += 3.0;
 	}
 	if (key == GLFW_KEY_M)
 	{
-		theWindow->llanta4 += 10.0;
+		theWindow->articulacion8 += 3.0;
 	}
+	if (key == GLFW_KEY_U)
+	{
+		theWindow->articulacion9 += 3.0;
+	}
+	if (key == GLFW_KEY_I)
+	{
+		theWindow->articulacion10 += 3.0;
+	}
+
+
 
 
 	if (key == GLFW_KEY_D && action == GLFW_PRESS)
