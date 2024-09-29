@@ -43,9 +43,22 @@ Texture pisoTexture;
 Texture dadoTexture;
 Texture logofiTexture;
 Texture decaTexture;
+Texture rinTexture;
+Texture cauchoTexture;
+Texture ojosTexture;
+Texture parrillaTexture;
 
-Model Kitt_M;
-Model Llanta_M;
+Model Coche_M;
+Model LlantaDI_M;
+Model LlantaDD_M;
+Model LlantaTI_M;
+Model LlantaTD_M;
+Model RinDI_M;
+Model RinDD_M;
+Model RinTI_M;
+Model RinTD_M;
+Model Parabrisas_M;
+Model Parrilla_M;
 Model Dado_M;
 
 Skybox skybox;
@@ -139,8 +152,6 @@ void CreateObjects()
 		0.0f, 0.5f, -0.5f,		0.0f, 1.0f,		0.0f, 0.0f, 0.0f,
 	};
 	calcAverageNormals(indices, 12, vertices, 32, 8, 5);
-
-
 	
 	Mesh *obj1 = new Mesh();
 	obj1->CreateMesh(vertices, indices, 32, 12);
@@ -160,78 +171,11 @@ void CreateObjects()
 
 }
 
-
 void CreateShaders()
 {
 	Shader *shader1 = new Shader();
 	shader1->CreateFromFiles(vShader, fShader);
 	shaderList.push_back(*shader1);
-}
-
-void CrearDado()
-{
-	unsigned int cubo_indices[] = {
-		// front
-		0, 1, 2,
-		2, 3, 0,
-		// back
-		8, 9, 10,
-		10, 11, 8,
-		// left
-		12, 13, 14,
-		14, 15, 12,
-		// bottom
-		16, 17, 18,
-		18, 19, 16,
-		// top
-		20, 21, 22,
-		22, 23, 20,
-		// right //cara derecha donde se aplicara la textura del 3
-		4, 5, 6,
-		6, 7, 4,
-	};
-
-	GLfloat cubo_vertices[] = {
-		// front, 5 pulpo
-		//x		y		z		S		T			NX		NY		NZ
-		-0.5f, -0.5f,  0.5f,	0.26f,  0.34f,		0.0f,	0.0f,	-1.0f,	//0
-		0.5f, -0.5f,  0.5f,		0.49f,	0.34f,		0.0f,	0.0f,	-1.0f,	//1
-		0.5f,  0.5f,  0.5f,		0.49f,	0.66f,		0.0f,	0.0f,	-1.0f,	//2
-		-0.5f,  0.5f,  0.5f,	0.26f,	0.66f,		0.0f,	0.0f,	-1.0f,	//3
-		// right, 3 cerdo
-		//x		y		z		S		T
-		0.5f, -0.5f,  0.5f,	    0.51f,  0.01f,		-1.0f,	0.0f,	0.0f,
-		0.5f, -0.5f,  -0.5f,	0.74f,	0.01f,		-1.0f,	0.0f,	0.0f,
-		0.5f,  0.5f,  -0.5f,	0.74f,	0.32f,		-1.0f,	0.0f,	0.0f,
-		0.5f,  0.5f,  0.5f,	    0.51f,	0.32f,		-1.0f,	0.0f,	0.0f,
-		// back, 2 vaca
-		-0.5f, -0.5f, -0.5f,	1.0f,   0.34f,		0.0f,	0.0f,	1.0f,
-		0.5f, -0.5f, -0.5f,		0.755f,	0.34f,		0.0f,	0.0f,	1.0f,
-		0.5f,  0.5f, -0.5f,		0.755f,	0.66f,		0.0f,	0.0f,	1.0f,
-		-0.5f,  0.5f, -0.5f,	1.0f,	0.66f,		0.0f,	0.0f,	1.0f,
-		// left, 4 pato
-		//x		y		z		S		T
-		-0.5f, -0.5f,  -0.5f,	0.51f,  0.67f,		1.0f,	0.0f,	0.0f,
-		-0.5f, -0.5f,  0.5f,	0.74f,	0.67f,		1.0f,	0.0f,	0.0f,
-		-0.5f,  0.5f,  0.5f,	0.74f,	1.0f,		1.0f,	0.0f,	0.0f,
-		-0.5f,  0.5f,  -0.5f,	0.51f,	1.0f,		1.0f,	0.0f,	0.0f,
-		// bottom, 6 catarina
-		//x		y		z		S		T
-		-0.5f, -0.5f,  0.5f,	0.24f,  0.66f,		0.0f,	1.0f,	0.0f,
-		0.5f,  -0.5f,  0.5f,	0.00f,	0.66f,		0.0f,	1.0f,	0.0f,
-		 0.5f,  -0.5f,  -0.5f,	0.00f,	0.34f,		0.0f,	1.0f,	0.0f,
-		-0.5f, -0.5f,  -0.5f,	0.24f,	0.34f,		0.0f,	1.0f,	0.0f,
-		//UP, 1 elefante
-		 //x		y		z		S		T
-		 -0.5f, 0.5f,  0.5f,	0.51f,  0.34f,		0.0f,	-1.0f,	0.0f,
-		 0.5f,  0.5f,  0.5f,	0.74f,	0.34f,		0.0f,	-1.0f,	0.0f,
-		  0.5f, 0.5f,  -0.5f,	0.74f,	0.66f,		0.0f,	-1.0f,	0.0f,
-		 -0.5f, 0.5f,  -0.5f,	0.51f,	0.66f,		0.0f,	-1.0f,	0.0f,
-	};
-
-	Mesh* dado = new Mesh();
-	dado->CreateMesh(cubo_vertices, cubo_indices, 192, 36);
-	meshList.push_back(dado);
 }
 
 void crearDecaedro()
@@ -251,52 +195,51 @@ void crearDecaedro()
 		21, 22, 23,
 		24, 25, 26,
 		27, 28, 29,
-
 	};
 
 	GLfloat deca_vertices[] = 
 	{
 		//cara 1 sup : I
-		0.0f,  0.09f,  0.0f,		0.505f,  0.670f,		0.0f,	0.0f,	0.0f,   //punta superior 0
+		0.0f,  0.09f,  0.0f,		0.501f,  0.666f,		0.0f,	0.0f,	0.0f,   //punta superior 0
 		0.0f,  0.0f,  -0.100f,		0.324f,  0.414f,		0.0f,	0.0f,	0.0f,   //1
 		0.100f, 0.0f, -0.025f,      0.668f,  0.414f,		0.0f,	0.0f,	0.0f,   //2
 		//cara 2 sup : III
-		0.0f,  0.09f,  0.0f,		0.500f,  0.679f,		0.0f,	0.0f,	0.0f,   //0
-		0.100f, 0.0f, -0.025f,      0.857f,  0.847f,		0.0f,	0.0f,	0.0f,	//2
-		0.065f,  0.0f,  0.095f,     0.923f,  0.605f,		0.0f,	0.0f,	0.0f,	//3
+		0.0f,  0.09f,  0.0f,		0.519f,  0.683f,		0.0f,	0.0f,	0.0f,   //0
+		0.100f, 0.0f, -0.025f,      0.850f,  0.840f,		0.0f,	0.0f,	0.0f,	//2
+		0.065f,  0.0f,  0.095f,     0.923f,  0.611f,		0.0f,	0.0f,	0.0f,	//3
 		//cara 3 sup : V
-		0.0f,  0.09f,  0.0f,		0.500f,  0.679f,		0.0f,	0.0f,	0.0f,	//0
-		0.065f,  0.0f,  0.095f,     0.0f,  0.0f,		0.0f,	0.0f,	0.0f,	//3
-		-0.065f, 0.0f, 0.095f,      0.0f,  0.0f,		0.0f,	0.0f,	0.0f,	//4
+		0.0f,  0.09f,  0.0f,		0.496f,  0.689f,		0.0f,	0.0f,	0.0f,	//0
+		0.065f,  0.0f,  0.095f,     0.197f,  0.884f,		0.0f,	0.0f,	0.0f,	//3
+		-0.065f, 0.0f, 0.095f,      0.519f,  0.968f,		0.0f,	0.0f,	0.0f,	//4
 		//cara 4 sup : VII
-		0.0f,  0.09f,  0.0f,		0.500f,  0.679f,		0.0f,	0.0f,	0.0f,	//0
-		-0.065f, 0.0f, 0.095f,      0.0f,  0.0f,		0.0f,	0.0f,	0.0f,	//4
-		-0.100f, 0.0f, -0.025f,     0.0f,  0.0f,		0.0f,	0.0f,	0.0f,	//5
+		0.0f,  0.09f,  0.0f,		0.488f,  0.671f,		0.0f,	0.0f,	0.0f,	//0
+		-0.065f, 0.0f, 0.095f,      0.310f,  0.420f,		0.0f,	0.0f,	0.0f,	//4
+		-0.100f, 0.0f, -0.025f,     0.080f,  0.601f,		0.0f,	0.0f,	0.0f,	//5
 		//cara 5 sup : IX
-		0.0f,  0.09f,  0.0f,		0.3f,  0.3f,		0.0f,	0.0f,	0.0f,	//0
-		0.0f,  0.0f,  -0.100f,		0.0f,  0.0f,		0.0f,	0.0f,	0.0f,   //1
-		-0.100f, 0.0f, -0.025f,     0.0f,  0.0f,		0.0f,	0.0f,	0.0f,	//5
+		0.0f,  0.09f,  0.0f,		0.689f,  0.086f,		0.0f,	0.0f,	0.0f,	//0
+		0.0f,  0.0f,  -0.100f,		0.869f,  0.341f,		0.0f,	0.0f,	0.0f,   //1
+		-0.100f, 0.0f, -0.025f,     0.509f,  0.341f,		0.0f,	0.0f,	0.0f,	//5
 
 		//cara 1 inf : X
-		0.0f,  -0.09f,  0.0f,		0.3f,  0.3f,		0.0f,	0.0f,	0.0f,   //punta inferior 6
-		0.0f,  0.0f,  -0.100f,		0.0f,  0.0f,		0.0f,	0.0f,	0.0f,   //1
-		0.100f, 0.0f, -0.025f,      0.0f,  0.0f,		0.0f,	0.0f,	0.0f,   //2
+		0.0f,  -0.09f,  0.0f,		0.501f,  0.328f,		0.0f,	0.0f,	0.0f,   //punta inferior 6
+		0.0f,  0.0f,  -0.100f,		0.326f,  0.078f,		0.0f,	0.0f,	0.0f,   //1
+		0.100f, 0.0f, -0.025f,      0.675f,  0.078f,		0.0f,	0.0f,	0.0f,   //2
 		//cara 2 inf : VIII
-		0.0f,  -0.09f,  0.0f,		0.500f,  0.679f,		0.0f,	0.0f,	0.0f,   //6
-		0.100f, 0.0f, -0.025f,      0.0f,  0.0f,		0.0f,	0.0f,	0.0f,	//2
-		0.065f,  0.0f,  0.095f,     0.0f,  0.0f,		0.0f,	0.0f,	0.0f,	//3
+		0.0f,  -0.09f,  0.0f,		0.312f,  0.089f,		0.0f,	0.0f,	0.0f,   //6
+		0.100f, 0.0f, -0.025f,      0.488f,  0.341f,		0.0f,	0.0f,	0.0f,	//2
+		0.065f,  0.0f,  0.095f,     0.134f,  0.341f,		0.0f,	0.0f,	0.0f,	//3
 		//cara 3 inf : VI
-		0.0f,  -0.09f,  0.0f,		0.500f,  0.679f,		0.0f,	0.0f,	0.0f,	//6
-		0.065f,  0.0f,  0.095f,     0.0f,  0.0f,		0.0f,	0.0f,	0.0f,	//3
-		-0.065f, 0.0f, 0.095f,      0.0f,  0.0f,		0.0f,	0.0f,	0.0f,	//4
+		0.0f,  -0.09f,  0.0f,		0.480f,  0.681f,		0.0f,	0.0f,	0.0f,	//6
+		0.065f,  0.0f,  0.095f,     0.144f,  0.843f,		0.0f,	0.0f,	0.0f,	//3 
+		-0.065f, 0.0f, 0.095f,      0.076f,  0.611f,		0.0f,	0.0f,	0.0f,	//4
 		//cara 4 inf : IV
-		0.0f,  -0.09f,  0.0f,		0.500f,  0.679f,		0.0f,	0.0f,	0.0f,	//6
-		-0.065f, 0.0f, 0.095f,      0.0f,  0.0f,		0.0f,	0.0f,	0.0f,	//4
-		-0.100f, 0.0f, -0.025f,     0.0f,  0.0f,		0.0f,	0.0f,	0.0f,	//5
+		0.0f,  -0.09f,  0.0f,		0.511f,  0.699f,		0.0f,	0.0f,	0.0f,	//6
+		-0.065f, 0.0f, 0.095f,      0.847f,  0.853f,		0.0f,	0.0f,	0.0f,	//4
+		-0.100f, 0.0f, -0.025f,     0.537f,  0.966f,		0.0f,	0.0f,	0.0f,	//5 
 		//cara 5 inf : II
-		0.0f,  -0.09f,  0.0f,		0.513f,  0.670f,		0.0f,	0.0f,	0.0f,	//6
-		0.0f,  0.0f,  -0.100f,		0.923f,  0.605f,		0.0f,	0.0f,	0.0f,   //1
-		-0.100f, 0.0f, -0.025f,     0.688f,  0.414f,		0.0f,	0.0f,	0.0f,	//5
+		0.0f,  -0.09f,  0.0f,		0.519f,  0.667f,		0.0f,	0.0f,	0.0f,	//6
+		0.0f,  0.0f,  -0.100f,		0.917f,  0.601f,		0.0f,	0.0f,	0.0f,   //1
+		-0.100f, 0.0f, -0.025f,     0.691f,  0.421f,		0.0f,	0.0f,	0.0f,	//5
 	};
 
 	Mesh* decaedro = new Mesh();
@@ -304,14 +247,12 @@ void crearDecaedro()
 	meshList.push_back(decaedro);
 }
 
-
 int main()
 {
 	mainWindow = Window(1366, 768); // 1280, 1024 or 1024, 768
 	mainWindow.Initialise();
 
 	CreateObjects();
-	CrearDado();
 	crearDecaedro();
 	CreateShaders();
 
@@ -329,14 +270,42 @@ int main()
 	dadoTexture.LoadTextureA();
 	logofiTexture = Texture("Textures/escudo_fi_color.tga");
 	logofiTexture.LoadTextureA();
+	//textura de dado 10 caras
 	decaTexture = Texture("Textures/dado_Deca.tga");
 	decaTexture.LoadTextureA();
+	//texturas para coche
+	rinTexture = Texture("Textures/rin.tga");
+	rinTexture.LoadTextureA();
+	cauchoTexture = Texture("Textures/caucho.tga");
+	cauchoTexture.LoadTextureA();
+	ojosTexture = Texture("Textures/ojos.tga");
+	ojosTexture.LoadTextureA();
+	parrillaTexture = Texture("Textures/parrilla.tga");
+	parrillaTexture.LoadTextureA();
 	
-	
-	Kitt_M = Model();
-	Kitt_M.LoadModel("Models/kitt_optimizado.obj");
-	Llanta_M = Model();
-	Llanta_M.LoadModel("Models/llanta_optimizada.obj");
+	Coche_M = Model();
+	LlantaDI_M = Model();
+	LlantaDD_M = Model();
+	LlantaTI_M = Model();
+	LlantaTD_M = Model();
+	RinDI_M = Model();
+	RinDD_M = Model();
+	RinTI_M = Model();
+	RinTD_M = Model();
+	Parabrisas_M = Model();
+	Parrilla_M = Model();
+
+	Coche_M.LoadModel("Models/coche.obj");
+	LlantaDI_M.LoadModel("Models/llantaDI.obj");
+	LlantaDD_M.LoadModel("Models/llantaDD.obj");
+	LlantaTI_M.LoadModel("Models/llantaTI.obj");
+	LlantaTD_M.LoadModel("Models/llantaTD.obj");
+	RinDI_M.LoadModel("Models/rinDI.obj");
+	RinDD_M.LoadModel("Models/rinDD.obj");
+	RinTI_M.LoadModel("Models/rinTI.obj");
+	RinTD_M.LoadModel("Models/rinTD.obj");
+	Parabrisas_M.LoadModel("Models/parabrisas.obj");
+	Parrilla_M.LoadModel("Models/parrilla.obj");
 
 	
 	std::vector<std::string> skyboxFaces;
@@ -396,92 +365,44 @@ int main()
 		
 		//renderizado de decaedro
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 5.0f, 3.0f));
 		model = glm::scale(model, glm::vec3(15.0f, 15.0f, 15.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		decaTexture.UseTexture();
 		int idx = meshList.size() - 1;
-		meshList[idx]->RenderMesh();
+		meshList[idx]->RenderMesh();		
 
-		//Dado de Opengl
-		//Ejercicio 1: Texturizar su cubo con la imagen dado_animales ya optimizada por ustedes
+		//renderizar coche
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-1.5f, 4.5f, -2.0f));
+		model = glm::translate(model, glm::vec3(0.0f, -1.65f, -10.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		dadoTexture.UseTexture();
-		meshList[4]->RenderMesh();
+		Coche_M.RenderModel();
 
-		
-		
-		//Ejercicio 2:Importar el cubo texturizado en el programa de modelado con 
-		//la imagen dado_animales ya optimizada por ustedes
-		/*
-		//Dado importado
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-3.0f, 3.0f, -2.0f));
-		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Dado_M.RenderModel();
-		*/
+		//renderizar llantas con textura de caucho
+		cauchoTexture.UseTexture();
+		LlantaDI_M.RenderModel();
+		LlantaDD_M.RenderModel();
+		LlantaTI_M.RenderModel();
+		LlantaTD_M.RenderModel();
 
-		
-		
-		/*Reporte de práctica :
-		Ejercicio 1: Crear un dado de 8 caras y texturizarlo por medio de código
-		Ejercicio 2: Importar el modelo de su coche con sus 4 llantas acomodadas
-		y tener texturizadas las 4 llantas (diferenciar caucho y rin)  y 
-		texturizar el logo de la Facultad de ingeniería en el cofre de su propio modelo de coche
-	
-		*/
-		//Instancia del coche
-		
+		//renderizar rines con su textura
+		rinTexture.UseTexture();
+		RinDI_M.RenderModel();
+		RinDD_M.RenderModel();
+		RinTI_M.RenderModel();
+		RinTD_M.RenderModel();
 
-		//model = glm::mat4(1.0);
-		//model = glm::translate(model, glm::vec3(0.0f + mainWindow.getmuevex() , -0.5f, -3.0f));
-		//modelaux = model;
-		//model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-		//model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		//Kitt_M.RenderModel();
+		//renderizar el parabrisas con los ojos del personaje como textura
+		ojosTexture.UseTexture();
+		Parabrisas_M.RenderModel();
 
-		////Llanta delantera izquierda
-		//model = modelaux;
-		//model = glm::translate(model, glm::vec3(7.0f, -0.5f, 8.0f));
-		//model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-		//model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
-		//color = glm::vec3(0.5f, 0.5f, 0.5f);//llanta con color gris
-		//glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		//Llanta_M.RenderModel();
-
-		////Llanta trasera izquierda
-		//model = modelaux;
-		//model = glm::translate(model, glm::vec3(15.5f, -0.5f, 8.0f));
-		//model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-		//model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
-		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		//Llanta_M.RenderModel();
-
-		////Llanta delantera derecha
-		//model = modelaux;
-		//model = glm::translate(model, glm::vec3(7.0f, -0.5f, 1.5f));
-		//model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-		//model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
-		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		//Llanta_M.RenderModel();
-
-		////Llanta trasera derecha
-		//model = modelaux;
-		//model = glm::translate(model, glm::vec3(15.5f, -0.5f, 1.5f));
-		//model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-		//model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
-		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		//Llanta_M.RenderModel();
+		//renderizar parrilla y cofre (están unidos en el modelo) con textura
+		parrillaTexture.UseTexture();
+		Parrilla_M.RenderModel();
 
 		glUseProgram(0);
 
 		mainWindow.swapBuffers();
 	}
-
 	return 0;
 }
