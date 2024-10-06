@@ -52,6 +52,7 @@ Model Coche_M;
 Model Llanta_M;
 Model Parabrisas_M;
 Model Parrilla_M;
+
 Model Lampara_M;
 
 Model Blackhawk_M;
@@ -323,11 +324,6 @@ int main()
 		lowerLight.y -= 0.3f;
 		spotLights[0].SetFlash(lowerLight, camera.getCameraDirection());
 
-		// luz de helicptero amarilla
-			glm::vec3 faroPos = glm::vec3(-0.75f + mainWindow.getmuevex(), 4.80f, 6.15f);
-			glm::vec3 faroDir = glm::vec3(-0.5f, -1.0f, 0.0f);
-			spotLights[2].SetFlash(faroPos, faroDir);
-
 		//información al shader de fuentes de iluminación
 		shaderList[0].SetDirectionalLight(&mainLight);
 		shaderList[0].SetPointLights(pointLights, pointLightCount);
@@ -355,8 +351,12 @@ int main()
 		model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Blackhawk_M.RenderModel();
+		// luz de helicptero amarilla
+		model = translate(model, glm::vec3(-0.45f, 2.5f, -0.75f)); //mover donde se colocará la luz
+		glm::vec3 faroPos = glm::vec3(model[3][0], model[3][1], model[3][2]); //implementacion a partir del modelo
+		glm::vec3 faroDir = glm::vec3(model[2][0] - 0.5f, model[2][1] - 1.3f, model[2][2]);
+		spotLights[2].SetFlash(faroPos, faroDir);
 
-		
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(13.0f, -0.8f, 1.5f));
 		model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
