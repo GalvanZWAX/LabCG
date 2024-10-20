@@ -14,8 +14,14 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 	width = windowWidth;
 	height = windowHeight;
 	banderaLuz = true;
+	banderaBoton = true;
+	banderaFaroD = false;
+	banderaFaroT = false;
+	tiroDado = 0;
 
 	muevex = 2.0f;
+	muevez = 0.0f;
+	rotaCofre = 0.0f;
 	for (size_t i = 0; i < 1024; i++)
 	{
 		keys[i] = 0;
@@ -38,7 +44,7 @@ int Window::Initialise()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 	//CREAR VENTANA
-	mainWindow = glfwCreateWindow(width, height, "Practica 07: Iluminacion 1", NULL, NULL);
+	mainWindow = glfwCreateWindow(width, height, "Practica 09: Animacion Basica.", NULL, NULL);
 
 	if (!mainWindow)
 	{
@@ -103,21 +109,15 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 	{
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
-	if (key == GLFW_KEY_Y)
+	if (key == GLFW_KEY_F && action == GLFW_PRESS)
 	{
-		theWindow-> muevex += 1.0;
-	}
-	if (key == GLFW_KEY_U)
-	{
-		theWindow-> muevex -= 1.0;
-	}
-	if (key == GLFW_KEY_O)
-	{
-		theWindow -> banderaLuz = true;
-	}
-	if (key == GLFW_KEY_P)
-	{
-		theWindow->banderaLuz = false;
+		printf("Tirando dado...\n");
+		theWindow->tiroDado = true;
+		std::random_device rd; // Seed
+		std::mt19937 gen(rd()); // Mersenne Twister engine
+
+		std::uniform_int_distribution<> dis(1, 10);
+		theWindow->numDado = dis(gen);
 	}
 
 	if (key >= 0 && key < 1024)

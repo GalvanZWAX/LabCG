@@ -1,5 +1,6 @@
 #pragma once
 #include<stdio.h>
+#include<random>
 #include<glew.h>
 #include<glfw3.h>
 
@@ -14,7 +15,15 @@ public:
 	GLfloat getXChange();
 	GLfloat getYChange();
 	GLfloat getmuevex() { return muevex; }
+	GLfloat getmuevez() { return muevez; }
+	GLfloat getRotaCofre() { return rotaCofre; }
+	int getNumDado() { return numDado; }
+	bool getTiroDado() { return tiroDado; }
+	void resetTiroDado() { tiroDado = false; }
 	bool getBanderaLuz() { return banderaLuz; };
+	bool getBanderaBoton() { return banderaBoton; };
+	bool getBanderaFaroD() { return banderaFaroD; };
+	bool getBanderaFaroT() { return banderaFaroT; };
 	bool getShouldClose() {
 		return  glfwWindowShouldClose(mainWindow);}
 	bool* getsKeys() { return keys; }
@@ -32,8 +41,15 @@ private:
 	GLfloat xChange;
 	GLfloat yChange;
 	GLfloat muevex;
+	GLfloat muevez;
+	GLfloat rotaCofre;
 	bool banderaLuz;
+	bool banderaBoton;
+	bool banderaFaroD;
+	bool banderaFaroT;
 	bool mouseFirstMoved;
+	bool tiroDado;
+	int numDado;
 	static void ManejaTeclado(GLFWwindow* window, int key, int code, int action, int mode);
 	static void ManejaMouse(GLFWwindow* window, double xPos, double yPos);
 };
