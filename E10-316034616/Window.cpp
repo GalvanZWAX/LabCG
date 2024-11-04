@@ -44,7 +44,7 @@ int Window::Initialise()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 	//CREAR VENTANA
-	mainWindow = glfwCreateWindow(width, height, "Practica 09-2: Animacion Avanzada.", NULL, NULL);
+	mainWindow = glfwCreateWindow(width, height, "Practica 10: Animacion por Keyframes.", NULL, NULL);
 
 	if (!mainWindow)
 	{
