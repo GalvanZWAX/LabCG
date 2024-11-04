@@ -1,10 +1,10 @@
-/*
-Animación:
-Sesión 1:
-Simple o básica:Por banderas y condicionales (más de 1 transformación geométrica se ve modificada
-Sesión 2
-Compleja: Por medio de funciones y algoritmos.
-Textura Animada
+/* 
+Animación por keyframes
+La textura del skybox fue conseguida desde la página https ://opengameart.org/content/elyvisions-skyboxes?page=1
+y edité en Gimp rotando 90 grados en sentido antihorario la imagen  sp2_up.png para poder ver continuidad.
+Fuentes :
+	https ://www.khronos.org/opengl/wiki/Keyframe_Animation
+	http ://what-when-how.com/wp-content/uploads/2012/07/tmpcd0074_thumb.png
 */
 //para cargar imagen
 #define STB_IMAGE_IMPLEMENTATION
@@ -14,6 +14,7 @@ Textura Animada
 #include <cmath>
 #include <vector>
 #include <math.h>
+#include <fstream>
 
 #include <glew.h>
 #include <glfw3.h>
@@ -30,7 +31,7 @@ Textura Animada
 #include "Camera.h"
 #include "Texture.h"
 #include "Sphere.h"
-#include"Model.h"
+#include "Model.h"
 #include "Skybox.h"
 
 //para iluminación
@@ -53,7 +54,10 @@ float toffsetnumerou = 0.0f;
 float toffsetnumerov = 0.0f;
 float toffsetnumerocambiau = 0.0;
 float angulovaria = 0.0f;
-int framesCambio = 0.0f;
+
+//variables para keyframes
+float reproduciranimacion, habilitaranimacion, guardoFrame, reinicioFrame, ciclo, ciclo2, contador = 0;
+int contadorFrames = -1;
 
 Window mainWindow;
 std::vector<Mesh*> meshList;
@@ -73,11 +77,8 @@ Texture Numero2Texture;
 
 Model Kitt_M;
 Model Llanta_M;
-Model Dragon_M;
-Model Cuerpo_M;
-Model AlaDer_M;
-Model AlaIzq_M;
-Model Tiamat_M;
+Model Blackhawk_M;
+
 Skybox skybox;
 
 //materiales
@@ -100,6 +101,9 @@ static const char* vShader = "shaders/shader_light.vert";
 
 // Fragment Shader
 static const char* fShader = "shaders/shader_light.frag";
+
+//función para teclado de keyframes 
+void inputKeyframes(bool* keys);
 
 //cálculo del promedio de las normales para sombreado de Phong
 void calcAverageNormals(unsigned int* indices, unsigned int indiceCount, GLfloat* vertices, unsigned int verticeCount,
@@ -147,29 +151,25 @@ void CreateObjects()
 			0.0f, 1.0f, 0.0f,		0.5f, 1.0f,		0.0f, 0.0f, 0.0f
 	};
 
-	unsigned int floorIndices[] = 
-	{
+	unsigned int floorIndices[] = {
 		0, 2, 1,
 		1, 2, 3
 	};
 
-	GLfloat floorVertices[] = 
-	{
+	GLfloat floorVertices[] = {
 		-10.0f, 0.0f, -10.0f,	0.0f, 0.0f,		0.0f, -1.0f, 0.0f,
 		10.0f, 0.0f, -10.0f,	10.0f, 0.0f,	0.0f, -1.0f, 0.0f,
 		-10.0f, 0.0f, 10.0f,	0.0f, 10.0f,	0.0f, -1.0f, 0.0f,
 		10.0f, 0.0f, 10.0f,		10.0f, 10.0f,	0.0f, -1.0f, 0.0f
 	};
-	unsigned int vegetacionIndices[] = 
-	{
+	unsigned int vegetacionIndices[] = {
 	   0, 1, 2,
 	   0, 2, 3,
 	   4,5,6,
 	   4,6,7
 	};
 
-	GLfloat vegetacionVertices[] = 
-	{
+	GLfloat vegetacionVertices[] = {
 		-0.5f, -0.5f, 0.0f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
 		0.5f, -0.5f, 0.0f,		1.0f, 0.0f,		0.0f, 0.0f, 0.0f,
 		0.5f, 0.5f, 0.0f,		1.0f, 1.0f,		0.0f, 0.0f, 0.0f,
@@ -179,31 +179,16 @@ void CreateObjects()
 		0.0f, -0.5f, 0.5f,		1.0f, 0.0f,		0.0f, 0.0f, 0.0f,
 		0.0f, 0.5f, 0.5f,		1.0f, 1.0f,		0.0f, 0.0f, 0.0f,
 		0.0f, 0.5f, -0.5f,		0.0f, 1.0f,		0.0f, 0.0f, 0.0f,
+
+
 	};
 	
-
-	unsigned int flechaIndices[] = 
-	{
+	unsigned int flechaIndices[] = {
 	   0, 1, 2,
 	   0, 2, 3,
 	};
 
-	GLfloat flechaVertices[] = 
-	{
-		-0.5f, 0.0f, 0.5f,		0.0f, 0.0f,		0.0f, -1.0f, 0.0f,
-		0.5f, 0.0f, 0.5f,		1.0f, 0.0f,		0.0f, -1.0f, 0.0f,
-		0.5f, 0.0f, -0.5f,		1.0f, 1.0f,		0.0f, -1.0f, 0.0f,
-		-0.5f, 0.0f, -0.5f,		0.0f, 1.0f,		0.0f, -1.0f, 0.0f,
-	};
-
-	unsigned int scoreIndices[] = 
-	{
-	   0, 1, 2,
-	   0, 2, 3,
-	};
-
-	GLfloat scoreVertices[] = 
-	{
+	GLfloat flechaVertices[] = {
 		-0.5f, 0.0f, 0.5f,		0.0f, 0.0f,		0.0f, -1.0f, 0.0f,
 		0.5f, 0.0f, 0.5f,		1.0f, 0.0f,		0.0f, -1.0f, 0.0f,
 		0.5f, 0.0f, -0.5f,		1.0f, 1.0f,		0.0f, -1.0f, 0.0f,
@@ -211,18 +196,30 @@ void CreateObjects()
 
 	};
 
-	unsigned int numeroIndices[] = 
-	{
+	unsigned int scoreIndices[] = {
 	   0, 1, 2,
 	   0, 2, 3,
 	};
 
-	GLfloat numeroVertices[] = 
-	{
+	GLfloat scoreVertices[] = {
+		-0.5f, 0.0f, 0.5f,		0.0f, 0.0f,		0.0f, -1.0f, 0.0f,
+		0.5f, 0.0f, 0.5f,		1.0f, 0.0f,		0.0f, -1.0f, 0.0f,
+		0.5f, 0.0f, -0.5f,		1.0f, 1.0f,		0.0f, -1.0f, 0.0f,
+		-0.5f, 0.0f, -0.5f,		0.0f, 1.0f,		0.0f, -1.0f, 0.0f,
+
+	};
+
+	unsigned int numeroIndices[] = {
+	   0, 1, 2,
+	   0, 2, 3,
+	};
+
+	GLfloat numeroVertices[] = {
 		-0.5f, 0.0f, 0.5f,		0.0f, 0.67f,		0.0f, -1.0f, 0.0f,
 		0.5f, 0.0f, 0.5f,		0.25f, 0.67f,		0.0f, -1.0f, 0.0f,
 		0.5f, 0.0f, -0.5f,		0.25f, 1.0f,		0.0f, -1.0f, 0.0f,
 		-0.5f, 0.0f, -0.5f,		0.0f, 1.0f,		0.0f, -1.0f, 0.0f,
+
 	};
 
 	Mesh *obj1 = new Mesh();
@@ -262,6 +259,118 @@ void CreateShaders()
 	shaderList.push_back(*shader1);
 }
 
+///////////////////////////////KEYFRAMES/////////////////////
+
+bool animacion = false;
+
+//NEW// Keyframes
+float posXavion = 2.0, posYavion = 5.0, posZavion = -3.0;  //valores del heli
+float	movAvion_x = 0.0f, movAvion_y = 0.0f; //se transforman durante la animacion
+float giroAvion = 0;
+
+#define MAX_FRAMES 100 //cuantos frames se necesitan
+int i_max_steps = 90; //interpolacion, 90 frames entre cada keyframes, mayor es mas fluidaxd
+int i_curr_steps = 0; //
+typedef struct _frame
+{
+	//Variables para GUARDAR Key Frames
+	float movAvion_x;		//Variable para PosicionX
+	float movAvion_y;		//Variable para PosicionY
+	float movAvion_xInc;		//Variable para IncrementoX
+	float movAvion_yInc;		//Variable para IncrementoY
+	float giroAvion;
+	float giroAvionInc;
+}FRAME;
+
+FRAME KeyFrame[MAX_FRAMES];
+int FrameIndex = 0;			//introducir datos
+bool play = false;
+int playIndex = 0;
+
+void saveFrame(void) //tecla L
+{
+	//printf("frameindex %d\n", FrameIndex);
+
+	KeyFrame[FrameIndex].movAvion_x = movAvion_x;
+	KeyFrame[FrameIndex].movAvion_y = movAvion_y;
+	KeyFrame[FrameIndex].giroAvion = giroAvion;
+	//para hacer no volatil, agregar una forma de escribir a un archivo para guardar los frames
+	
+
+	std::ofstream outFile("keyFrames.txt", std::ios::app);
+
+	if (outFile.is_open())
+	{
+		
+		outFile << "KeyFrame[" << contadorFrames << "].movAvion_x = " << movAvion_x << ".0f;" << std::endl;
+		outFile << "KeyFrame[" << contadorFrames << "].movAvion_y = " << movAvion_y << ".0f;" << std::endl;
+		outFile << "KeyFrame[" << contadorFrames << "].giroAvion = " << giroAvion << ".0f;" << std::endl;
+		outFile << "" << std::endl;
+		
+		printf("\nFrame guardado en keyFrames.txt.\n");
+
+		outFile.close();
+	}
+	else
+	{
+		std::cerr << "Error al abrir.";
+	}
+	FrameIndex++;
+}
+
+void resetElements(void) //Tecla 0
+{
+	movAvion_x = KeyFrame[0].movAvion_x;
+	movAvion_y = KeyFrame[0].movAvion_y;
+	giroAvion = KeyFrame[0].giroAvion;
+}
+
+void interpolation(void)
+{
+	//se manda llamar durante la animacion. frame siguiente menos frame anterior entre frames intermedios
+	KeyFrame[playIndex].movAvion_xInc = (KeyFrame[playIndex + 1].movAvion_x - KeyFrame[playIndex].movAvion_x) / i_max_steps;
+	KeyFrame[playIndex].movAvion_yInc = (KeyFrame[playIndex + 1].movAvion_y - KeyFrame[playIndex].movAvion_y) / i_max_steps;
+	KeyFrame[playIndex].giroAvionInc = (KeyFrame[playIndex + 1].giroAvion - KeyFrame[playIndex].giroAvion) / i_max_steps;
+
+}
+
+void animate(void)
+{
+	//Movimiento del objeto con barra espaciadora
+	if (play)
+	{
+		if (i_curr_steps >= i_max_steps) //identificar si se llega al ultimo cuadro, delimitar al penultimo y ultimo frame
+		{
+			playIndex++;
+			printf("playindex : %d\n", playIndex);
+			if (playIndex > FrameIndex - 2)	//Fin de toda la animación con último frame?
+			{
+				printf("Frame index= %d\n", FrameIndex);
+				printf("termino la animacion\n");
+				playIndex = 0;
+				play = false;
+			}
+			else //Interpolación del próximo cuadro
+			{
+				
+				i_curr_steps = 0; //Resetea contador
+				//Interpolar
+				interpolation();
+			}
+		}
+		else
+		{
+			//Dibujar Animación
+			movAvion_x += KeyFrame[playIndex].movAvion_xInc;
+			movAvion_y += KeyFrame[playIndex].movAvion_yInc;
+			giroAvion += KeyFrame[playIndex].giroAvionInc;
+			i_curr_steps++;
+		}
+	}
+}
+
+///////////////* FIN KEYFRAMES*////////////////////////////
+
 int main()
 {
 	mainWindow = Window(1366, 768); // 1280, 1024 or 1024, 768
@@ -295,22 +404,16 @@ int main()
 	Kitt_M.LoadModel("Models/kitt_optimizado.obj");
 	Llanta_M = Model();
 	Llanta_M.LoadModel("Models/llanta_optimizada.obj");
-	Dragon_M = Model();
-	Dragon_M.LoadModel("Models/17174_Tiamat_new.obj");
-	Cuerpo_M = Model();
-	Cuerpo_M.LoadModel("Models/Cuerpo.obj");
-	AlaDer_M = Model();
-	AlaDer_M.LoadModel("Models/AlaDer.obj");
-	AlaIzq_M = Model();
-	AlaIzq_M.LoadModel("Models/AlaIzq.obj");
+	Blackhawk_M = Model();
+	Blackhawk_M.LoadModel("Models/uh60.obj");
 
 	std::vector<std::string> skyboxFaces;
-	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
-	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_lf.tga");
-	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_dn.tga");
-	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_up.tga");
-	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_bk.tga");
-	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_ft.tga");
+	skyboxFaces.push_back("Textures/Skybox/sp2_rt.png");
+	skyboxFaces.push_back("Textures/Skybox/sp2_lf.png");
+	skyboxFaces.push_back("Textures/Skybox/sp2_dn.png");
+	skyboxFaces.push_back("Textures/Skybox/sp2_up.png");
+	skyboxFaces.push_back("Textures/Skybox/sp2_bk.png");
+	skyboxFaces.push_back("Textures/Skybox/sp2_ft.png");
 
 	skybox = Skybox(skyboxFaces);
 
@@ -320,7 +423,7 @@ int main()
 	//luz direccional, sólo 1 y siempre debe de existir
 	mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
 		0.3f, 0.3f,
-		0.0f, -1.0f, 0.0f);
+		0.0f, 0.0f, -1.0f);
 	//contador de luces puntuales
 	unsigned int pointLightCount = 0;
 	//Declaración de primer luz puntual
@@ -358,12 +461,25 @@ int main()
 	movOffset = 0.01f;
 	rotllanta = 0.0f;
 	rotllantaOffset = 10.0f;
+	glm::vec3 posblackhawk = glm::vec3(2.0f, 0.0f, 0.0f);
+	
+	//---------PARA TENER KEYFRAMES GUARDADOS NO VOLATILES QUE SIEMPRE SE UTILIZARAN SE DECLARAN AQUÍ
 
-	glm::mat4 model(1.0);
-	glm::mat4 modelaux(1.0);
-	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
-	glm::vec2 toffset = glm::vec2(0.0f, 0.0f);
+	
+	//Se agregan nuevos frames 
 
+		printf("Teclas para uso de keyframes:\n\n");
+		printf("\t[SPACE] Para reproducir animacion.\n");
+		printf("\t[0] para volver a habilitar reproduccion de la animacion\n\n");
+		printf("\t[1] Para mover avion en -X.\n");
+		printf("\t[2] Para mover avion en +X.\n");
+		printf("\t[3] Para mover avion en +Y.\n");
+		printf("\t[4] Para mover avion en -Y.\n");
+		printf("\t[R] Para rotar avion 180 deg.\n");
+		printf("\t[5] Para habilitar transformaciones.\n\n");
+		printf("\t[G] Para guardar keyframe.\n");
+		printf("\t[P] Para habilitar guardado.\n\n");
+		
 	////Loop mientras no se cierra la ventana
 	while (!mainWindow.getShouldClose())
 	{
@@ -378,13 +494,18 @@ int main()
 		{
 			movCoche -= movOffset * deltaTime;
 			//printf("avanza%f \n ",movCoche);
-			rotllanta += rotllantaOffset * deltaTime;
 		}
-	
+		rotllanta += rotllantaOffset * deltaTime;
+
+
 		//Recibir eventos del usuario
 		glfwPollEvents();
 		camera.keyControl(mainWindow.getsKeys(), deltaTime);
 		camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+
+		//-------Para Keyframes
+		inputKeyframes(mainWindow.getsKeys());
+		animate();
 
 		// Clear the window
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -415,6 +536,11 @@ int main()
 		shaderList[0].SetDirectionalLight(&mainLight);
 		shaderList[0].SetPointLights(pointLights, pointLightCount);
 		shaderList[0].SetSpotLights(spotLights, spotLightCount);
+
+		glm::mat4 model(1.0);
+		glm::mat4 modelaux(1.0);
+		glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
+		glm::vec2 toffset = glm::vec2(0.0f, 0.0f);
 		
 		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
 		model = glm::mat4(1.0);
@@ -476,20 +602,18 @@ int main()
 		Llanta_M.RenderModel();
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, 5.0f+sin(glm::radians(angulovaria)), 6.0));
+		posblackhawk=glm::vec3(posXavion + movAvion_x, posYavion + movAvion_y, posZavion);
+		model = glm::translate(model, posblackhawk);
 		model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+		model = glm::rotate(model, giroAvion * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
 		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
-		/*color = glm::vec3(0.0f, 1.0f, 0.0f);
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));*/
+		//color = glm::vec3(0.0f, 1.0f, 0.0f);
+		//glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		//Dragon_M.RenderModel();
-		Cuerpo_M.RenderModel();
-		AlaDer_M.RenderModel();
-		AlaIzq_M.RenderModel();
+		Blackhawk_M.RenderModel();
 		
-		/*color = glm::vec3(1.0f, 1.0f, 1.0f);
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));*/
 		//Agave ¿qué sucede si lo renderizan antes del coche y de la pista?
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f, 0.5f, -2.0f));
@@ -504,8 +628,8 @@ int main()
 		
 		//textura con movimiento
 		//Importantes porque la variable uniform no podemos modificarla directamente
-		toffsetflechau += 0.001; //hacia la izquierda
-		toffsetflechav = 0.000;  //hacia abajo (arriba por el rotate)
+		toffsetflechau += 0.001;
+		toffsetflechav += 0.0;
 		//para que no se desborde la variable
 		if (toffsetflechau > 1.0)
 			toffsetflechau = 0.0;
@@ -527,132 +651,6 @@ int main()
 		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		meshList[4]->RenderMesh();
 
-		//plano con todos los números
-		toffsetnumerou = 0.0;
-		toffsetnumerov = 0.0;
-		toffset = glm::vec2(toffsetnumerou, toffsetnumerov);
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-6.0f, 2.0f, -6.0f));
-		model = glm::rotate(model, 90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		color = glm::vec3(1.0f, 1.0f, 1.0f);
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		NumerosTexture.UseTexture();
-		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
-		meshList[5]->RenderMesh();
-
-		//número 1
-		//toffsetnumerou = 0.0;
-		//toffsetnumerov = 0.0;
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-10.0f, 2.0f, -6.0f));
-		model = glm::rotate(model, 90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-		//glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		color = glm::vec3(1.0f, 1.0f, 1.0f);
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		NumerosTexture.UseTexture();
-		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
-		meshList[6]->RenderMesh();
-
-		for (int i = 1; i<4; i++)
-		{
-			//números 2-4
-			toffsetnumerou += 0.25;
-			toffsetnumerov = 0.0;
-			toffset = glm::vec2(toffsetnumerou, toffsetnumerov);
-			model = glm::mat4(1.0);
-			model = glm::translate(model, glm::vec3(-10.0f - (i * 3.0), 2.0f, -6.0f));
-			model = glm::rotate(model, 90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-			model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-			glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
-			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-			color = glm::vec3(1.0f, 1.0f, 1.0f);
-			glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-			NumerosTexture.UseTexture();
-			Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
-			meshList[6]->RenderMesh();
-		 }
-
-		for (int j = 1; j < 5; j++)
-		{
-			//números 5-8
-			toffsetnumerou += 0.25;
-			toffsetnumerov = -0.33;
-			toffset = glm::vec2(toffsetnumerou, toffsetnumerov);
-			model = glm::mat4(1.0);
-			model = glm::translate(model, glm::vec3(-7.0f - (j * 3.0), 5.0f, -6.0f));
-			model = glm::rotate(model, 90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-			model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-			glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
-			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-			color = glm::vec3(1.0f, 1.0f, 1.0f);
-			glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-			NumerosTexture.UseTexture();
-			Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
-			meshList[6]->RenderMesh();
-		}
- 
-		//número cambiante 
-		/*
-			¿Cómo hacer para que sea a una velocidad visible?
-		*/
-
-		if (framesCambio % 100 == 0)
-		{
-			toffsetnumerocambiau += 0.25;
-		}
-		if (toffsetnumerocambiau > 1.0)
-		{
-			toffsetnumerocambiau = 0.0;
-			framesCambio = 0;
-		}
-		framesCambio++;
-		printf("framesCambio: %d\toffset: %f\n", framesCambio, toffsetnumerocambiau);
-			
-		toffsetnumerov = 0.0;
-		toffset = glm::vec2(toffsetnumerocambiau, toffsetnumerov);
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-10.0f, 10.0f, -6.0f));
-		model = glm::rotate(model, 90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		color = glm::vec3(1.0f, 1.0f, 1.0f);
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		NumerosTexture.UseTexture();
-		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
-		meshList[6]->RenderMesh();
-
-		//cambiar automáticamente entre textura número 1 y número 2
-		toffsetnumerou = 0.0;
-		toffsetnumerov = 0.0;
-		toffset = glm::vec2(toffsetnumerou, toffsetnumerov);
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-13.0f, 10.0f, -6.0f));
-		model = glm::rotate(model, 90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		color = glm::vec3(1.0f, 1.0f, 1.0f);
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		//Numero1Texture.UseTexture();
-
-		if (framesCambio < 200)
-		{
-			Numero1Texture.UseTexture();
-		}
-		else
-		{
-			Numero2Texture.UseTexture();
-		}
-		
-		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
-		meshList[5]->RenderMesh();
-
 		glDisable(GL_BLEND);
 
 		glUseProgram(0);
@@ -660,4 +658,137 @@ int main()
 		mainWindow.swapBuffers();
 	}
 	return 0;
+}
+
+void inputKeyframes(bool* keys)
+{
+	if (keys[GLFW_KEY_SPACE])
+	{
+		if (reproduciranimacion < 1)
+		{
+			if (play == false && (FrameIndex > 1))
+			{
+				resetElements();
+				//First Interpolation				
+				interpolation();
+				play = true;
+				playIndex = 0;
+				i_curr_steps = 0;
+				reproduciranimacion++;
+				//printf("\n presiona 0 para habilitar reproducir de nuevo la animación\n");
+				habilitaranimacion = 0;
+			}
+			else
+			{
+				play = false;
+			}
+		}
+	}
+	if (keys[GLFW_KEY_0])
+	{
+		if (habilitaranimacion < 1 && reproduciranimacion>0)
+		{
+			printf("Animacion habilitada con [SPACE].\n");
+			reproduciranimacion = 0;
+			habilitaranimacion++;
+			
+		}
+	}
+	if (keys[GLFW_KEY_G])
+	{
+		if (guardoFrame < 1)
+		{
+			contadorFrames++;
+			saveFrame();
+			printf("movAvion_x es: %f\n", movAvion_x);
+			printf("movAvion_y es: %f\n", movAvion_y);
+			printf("giroAvion es: %f\n", giroAvion);
+			printf("Presiona [P] para habilitar guardado.\n\n");
+			guardoFrame++;
+			reinicioFrame = 0;
+		}
+	}
+	if (keys[GLFW_KEY_P])
+	{
+		if (reinicioFrame < 1)
+		{
+			guardoFrame = 0;
+			printf("Guardado habilitado con [G].\n\n");
+			reinicioFrame++;
+		}
+	}
+	if (keys[GLFW_KEY_1])
+	{
+		if (ciclo < 1)
+		{
+			movAvion_x -= 1.0f;
+			printf("[movAvion_x es: %f]\n", movAvion_x);
+			printf("movAvion_y es: %f\n", movAvion_y);
+			printf("giroAvion es: %f\n", giroAvion);
+			ciclo++;
+			ciclo2 = 0;
+			printf("\nPresiona [5] para habilitar variables.\n");
+		}
+	}
+	if (keys[GLFW_KEY_2])
+	{
+		if (ciclo < 1)
+		{
+			movAvion_x += 1.0f;
+			printf("[movAvion_x es: %f]\n", movAvion_x);
+			printf("movAvion_y es: %f\n", movAvion_y);
+			printf("giroAvion es: %f\n", giroAvion);
+			ciclo++;
+			ciclo2 = 0;
+			printf("\nPresiona [5] para habilitar variables.\n");
+		}
+	}
+	if (keys[GLFW_KEY_3])
+	{
+		if (ciclo < 1)
+		{
+			movAvion_y += 1.0f;
+			printf("movAvion_x es: %f\n", movAvion_x);
+			printf("[movAvion_y es: %f]\n", movAvion_y);
+			printf("giroAvion es: %f\n", giroAvion);
+			ciclo++;
+			ciclo2 = 0;
+			printf("\nPresiona [5] para habilitar variables.\n");
+		}
+	}
+	if (keys[GLFW_KEY_4])
+	{
+		if (ciclo < 1)
+		{
+			movAvion_y -= 1.0f;
+			printf("movAvion_x es: %f\n", movAvion_x);
+			printf("[movAvion_y es: %f]\n", movAvion_y);
+			printf("giroAvion es: %f\n", giroAvion);
+			ciclo++;
+			ciclo2 = 0;
+			printf("\nPresiona [5] para habilitar variables.\n");
+		}
+	}
+	if (keys[GLFW_KEY_R])
+	{
+		if (ciclo < 1)
+		{
+			giroAvion += 180.0f;
+			printf("movAvion_x es: %f\n", movAvion_x);
+			printf("movAvion_y es: %f\n", movAvion_y);
+			printf("[giroAvion es: %f]\n", giroAvion);
+			ciclo++;
+			ciclo2 = 0;
+			printf("\nPresiona [5] para habilitar variables.\n");
+		}
+	}
+	if (keys[GLFW_KEY_5])
+	{
+		if (ciclo2 < 1)
+		{
+			ciclo = 0;
+			printf("\n Ya puedes modificar las variables.\n");
+			ciclo2++;
+		}
+	}
 }
